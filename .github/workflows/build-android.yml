@@ -1,0 +1,67 @@
+name: Compilar Android (APK y AAB)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    name: Compilar APK y AAB para Android
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Configurar Java JDK (Java 21)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Compilar aplicación web (React + Vite)
+        run: npm run build
+
+      - name: Configurar Capacitor Android
+        run: |
+          if [ ! -d "android" ]; then
+            npx cap add android
+          fi
+          npx cap sync android
+
+      - name: Dar permisos de ejecución a Gradle
+        run: chmod +x android/gradlew
+
+      - name: Compilar APK (Instalador directo para Celular / Tablet)
+        run: |
+          cd android
+          ./gradlew assembleDebug
+
+      - name: Compilar AAB (Paquete para Google Play Console)
+        run: |
+          cd android
+          ./gradlew bundleRelease || ./gradlew bundleDebug
+
+      - name: Subir APK de prueba (Instalable)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Legado-de-Vida-APK-Instalador
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: warn
+
+      - name: Subir AAB (Google Play Store)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Legado-de-Vida-AAB-GooglePlay
+          path: android/app/build/outputs/bundle/**/*.aab
+          if-no-files-found: warn

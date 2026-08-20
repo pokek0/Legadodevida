@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Poppins", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Great Vibes", cursive;
+  --font-serif: "Playfair Display", serif;
+  --color-brand-blue: #405E9F;
+  --color-brand-blue-hover: #344d82;
+  --color-brand-yellow: #f59e0b;
+  --color-brand-yellow-hover: #d97706;
+  --color-brand-orange: #f97316;
+  --color-brand-orange-hover: #ea580c;
+}
+
+body {
+  @apply bg-stone-50 text-stone-900 font-sans;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+

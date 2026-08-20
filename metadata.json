@@ -1,0 +1,7 @@
+{
+  "name": "Legado de Vida",
+  "description": "Una aplicación para grabar y organizar historias de vida por capítulos, permitiendo a los usuarios narrar sus recuerdos y experiencias.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
