@@ -8,6 +8,7 @@ import { GoogleGenAI, Modality } from "@google/genai";
 import Markdown from 'react-markdown';
 import { motion } from 'motion/react';
 import { audioStorage, draftStorage } from './src/services/storage';
+import appLogo from './src/assets/logo.png';
 
 // Placeholder for background music file path
 // IMPORTANT: Replace this with the actual path to your background music file (e.g., '/audio/background_music.mp3')
@@ -316,7 +317,7 @@ export default function App(): React.ReactElement {
       <div className="pb-10">
         <header className="text-center mb-8 bg-white p-4 sm:p-6 md:p-8 rounded-3xl shadow-md border-2 border-stone-100 flex flex-col items-center max-w-full overflow-hidden">
           <img 
-            src="/logo.png" 
+            src={appLogo} 
             alt="Legado de Vida Logo" 
             className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 rounded-3xl mb-4 shadow-sm object-contain border-4 border-stone-50 bg-white max-w-full" 
             referrerPolicy="no-referrer" 
@@ -937,6 +938,27 @@ export default function App(): React.ReactElement {
     }, [isRecording, isPaused]);
 
 
+    const getSupportedAudioMimeType = (): string => {
+      if (typeof MediaRecorder === 'undefined') return 'audio/webm';
+      const candidates = [
+        'audio/webm;codecs=opus',
+        'audio/webm',
+        'audio/mp4',
+        'audio/aac',
+        'audio/ogg'
+      ];
+      for (const mime of candidates) {
+        try {
+          if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(mime)) {
+            return mime;
+          }
+        } catch {
+          // ignore
+        }
+      }
+      return '';
+    };
+
     const startRecording = async () => {
       // Before starting, ensure no existing recording/draft is mistakenly kept
       setAudioDataForPlayer(null);
@@ -947,12 +969,24 @@ export default function App(): React.ReactElement {
       setIsPaused(false);
 
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorderRef.current = new MediaRecorder(stream);
+        if (!navigator?.mediaDevices?.getUserMedia) {
+          throw new Error('getUserMedia no disponible en este dispositivo');
+        }
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
+        const mimeType = getSupportedAudioMimeType();
+        const options = mimeType ? { mimeType } : undefined;
+        mediaRecorderRef.current = new MediaRecorder(stream, options);
         audioChunksRef.current = [];
         mediaRecorderRef.current.ondataavailable = (e: BlobEvent) => { if (e.data.size > 0) audioChunksRef.current.push(e.data); };
         mediaRecorderRef.current.onstop = () => {
-          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+          const actualMime = mimeType || 'audio/webm';
+          const audioBlob = new Blob(audioChunksRef.current, { type: actualMime });
           const reader = new FileReader();
           reader.readAsDataURL(audioBlob);
           reader.onloadend = () => {
@@ -1007,9 +1041,13 @@ export default function App(): React.ReactElement {
           animationFrameIdRef.current = requestAnimationFrame(drawWaveform);
         }
 
-      } catch (err) {
-        alert("Necesitamos el micrófono para escucharte.");
+      } catch (err: any) {
         console.error("Microphone access error:", err);
+        const isPermissionError = err?.name === 'NotAllowedError' || err?.name === 'PermissionDeniedError' || err?.message?.includes('Permission');
+        const alertMsg = isPermissionError
+          ? "No se pudo acceder al micrófono. Por favor permite el acceso al micrófono en la ventana de permisos o en los Ajustes de la App en tu dispositivo."
+          : "No se pudo iniciar la grabación de audio. Verifica los permisos del micrófono en tu dispositivo.";
+        alert(alertMsg);
         // If error, ensure recording states are reset
         setIsRecording(false);
         setShowNewRecordingControls(true); // Show new recording controls again
@@ -2122,13 +2160,36 @@ export default function App(): React.ReactElement {
 
     const startRecordingDedication = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const recorder = new MediaRecorder(stream);
+        if (!navigator?.mediaDevices?.getUserMedia) {
+          throw new Error('getUserMedia no disponible');
+        }
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
+        const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/aac'];
+        let selectedMime = '';
+        if (typeof MediaRecorder !== 'undefined') {
+          for (const m of candidates) {
+            try {
+              if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(m)) {
+                selectedMime = m;
+                break;
+              }
+            } catch {
+              // ignore
+            }
+          }
+        }
+        const recorder = new MediaRecorder(stream, selectedMime ? { mimeType: selectedMime } : undefined);
         const chunks: Blob[] = [];
 
         recorder.ondataavailable = (e) => chunks.push(e.data);
         recorder.onstop = async () => {
-          const blob = new Blob(chunks, { type: 'audio/webm' });
+          const blob = new Blob(chunks, { type: selectedMime || 'audio/webm' });
           const reader = new FileReader();
           reader.onloadend = () => {
             const base64 = reader.result as string;
@@ -2143,8 +2204,9 @@ export default function App(): React.ReactElement {
         setIsRecordingDedication(true);
         setDedicationTimer(0);
         dedicationIntervalRef.current = window.setInterval(() => setDedicationTimer(p => p + 1), 1000);
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error starting dedication recording", err);
+        alert("No se pudo acceder al micrófono para la dedicatoria. Por favor verifica los permisos.");
       }
     };
 

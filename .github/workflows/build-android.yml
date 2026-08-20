@@ -39,6 +39,33 @@ jobs:
           fi
           npx cap sync android
 
+      - name: Inyectar permisos de micrófono y audio en AndroidManifest.xml
+        run: |
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+          if [ -f "$MANIFEST" ]; then
+            # Remover si existen para evitar duplicados
+            sed -i '/android.permission.RECORD_AUDIO/d' "$MANIFEST"
+            sed -i '/android.permission.MODIFY_AUDIO_SETTINGS/d' "$MANIFEST"
+            sed -i '/android.permission.READ_MEDIA_AUDIO/d' "$MANIFEST"
+            
+            # Insertar permisos justo antes de <application
+            sed -i '/<application/i \    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />\n    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />' "$MANIFEST"
+            
+            echo "AndroidManifest.xml actualizado con éxito con permisos de micrófono."
+            cat "$MANIFEST"
+          else
+            echo "Error: no se encontró AndroidManifest.xml"
+            exit 1
+          fi
+
+      - name: Configurar Target SDK
+        run: |
+          VARS="android/variables.gradle"
+          if [ -f "$VARS" ]; then
+            sed -i "s/targetSdkVersion = .*/targetSdkVersion = 35/g" "$VARS" || true
+            sed -i "s/compileSdkVersion = .*/compileSdkVersion = 35/g" "$VARS" || true
+          fi
+
       - name: Dar permisos de ejecución a Gradle
         run: chmod +x android/gradlew
 

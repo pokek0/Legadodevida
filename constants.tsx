@@ -3,6 +3,11 @@ import React from 'react';
 import { Heart, Star, Sun, Anchor, Feather } from 'lucide-react';
 import { Chapter } from './types';
 
+import imgInfancia from './src/assets/chapter_infancia.png';
+import imgJuventud from './src/assets/chapter_juventud.png';
+import imgAdultez from './src/assets/chapter_adultez.png';
+import imgLegado from './src/assets/chapter_legado.png';
+
 // Esta URL es para los botones de compartir. Si no tienes dominio, puedes usar la URL donde hospedes tu app (ej: GitHub Pages o Firebase)
 export const APP_URL = typeof window !== 'undefined' ? window.location.origin : '';
 
@@ -13,7 +18,7 @@ export const CHAPTERS: Chapter[] = [
     subtitle: 'Raíces, juegos y familia',
     icon: (props?: { size?: number; className?: string }) => (
       <img
-        src="/chapter_infancia.png"
+        src={imgInfancia}
         alt="Mi Niñez"
         style={props?.size ? { width: props.size, height: props.size, maxWidth: '100%', maxHeight: '100%' } : undefined}
         className={`w-full h-full max-w-full max-h-full object-contain rounded-2xl ${props?.className || ''}`}
@@ -40,7 +45,7 @@ export const CHAPTERS: Chapter[] = [
     subtitle: 'Amores, trabajo y descubrimientos',
     icon: (props?: { size?: number; className?: string }) => (
       <img
-        src="/chapter_juventud.png"
+        src={imgJuventud}
         alt="Mi Juventud"
         style={props?.size ? { width: props.size, height: props.size, maxWidth: '100%', maxHeight: '100%' } : undefined}
         className={`w-full h-full max-w-full max-h-full object-contain rounded-2xl ${props?.className || ''}`}
@@ -65,7 +70,7 @@ export const CHAPTERS: Chapter[] = [
     subtitle: 'Construyendo mi propio camino',
     icon: (props?: { size?: number; className?: string }) => (
       <img
-        src="/chapter_adultez.png"
+        src={imgAdultez}
         alt="La Adultez"
         style={props?.size ? { width: props.size, height: props.size, maxWidth: '100%', maxHeight: '100%' } : undefined}
         className={`w-full h-full max-w-full max-h-full object-contain rounded-2xl ${props?.className || ''}`}
@@ -89,7 +94,7 @@ export const CHAPTERS: Chapter[] = [
     subtitle: 'Mis pensamientos para ustedes',
     icon: (props?: { size?: number; className?: string }) => (
       <img
-        src="/chapter_legado.png"
+        src={imgLegado}
         alt="Sabiduría y Legado"
         style={props?.size ? { width: props.size, height: props.size, maxWidth: '100%', maxHeight: '100%' } : undefined}
         className={`w-full h-full max-w-full max-h-full object-contain rounded-2xl ${props?.className || ''}`}
