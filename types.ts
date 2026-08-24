@@ -18,8 +18,10 @@ export interface Chapter {
   questions: Question[];
 }
 
+export type RecordingItem = string | { mimeType?: string; data: string };
+
 export type Recordings = {
-  [questionId: string]: string; // Stores base64 audio data
+  [questionId: string]: RecordingItem; // Stores either a data URL string or an object { mimeType, data }
 };
 
 export type CoverTemplate = 'option1' | 'option2';
