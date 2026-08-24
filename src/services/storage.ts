@@ -1,3 +1,4 @@
+import { RecordingItem } from '../../types';
 
 export class AudioStorage {
   private dbName = 'MemoriaVivaDB';
@@ -21,18 +22,18 @@ export class AudioStorage {
     });
   }
 
-  async save(id: string, data: string): Promise<void> {
+  async save(id: string, item: RecordingItem): Promise<void> {
     if (!this.db) await this.init();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(this.storeName, 'readwrite');
       const store = transaction.objectStore(this.storeName);
-      const request = store.put(data, id);
+      const request = store.put(item, id);
       request.onsuccess = () => resolve();
       request.onerror = () => reject(request.error);
     });
   }
 
-  async get(id: string): Promise<string | null> {
+  async get(id: string): Promise<RecordingItem | null> {
     if (!this.db) await this.init();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(this.storeName, 'readonly');
@@ -43,17 +44,17 @@ export class AudioStorage {
     });
   }
 
-  async getAll(): Promise<Record<string, string>> {
+  async getAll(): Promise<Record<string, RecordingItem>> {
     if (!this.db) await this.init();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(this.storeName, 'readonly');
       const store = transaction.objectStore(this.storeName);
       const request = store.getAll();
       const keysRequest = store.getAllKeys();
-      
+
       request.onsuccess = () => {
         keysRequest.onsuccess = () => {
-          const result: Record<string, string> = {};
+          const result: Record<string, RecordingItem> = {};
           const values = request.result;
           const keys = keysRequest.result as string[];
           keys.forEach((key, i) => {
