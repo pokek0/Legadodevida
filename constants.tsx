@@ -1,14 +1,12 @@
-
 import React from 'react';
 import { Heart, Star, Sun, Anchor, Feather } from 'lucide-react';
 import { Chapter } from './types';
 
 // Importar las imágenes del directorio src
-import logoImg from './src/1_20260902_230633_0000.jpg';
-import chapter1Img from './src/2_20260902_230633_0001.jpg';
-import chapter2Img from './src/3_20260902_230633_0002.jpg';
-import chapter3Img from './src/4_20260902_230633_0003.jpg';
-import chapter4Img from './src/5_20260902_230633_0004.jpg';
+import { ASSETS } from './src/assets';
+
+const { logo: logoImg, chapters } = ASSETS;
+const [chapter1Img, chapter2Img, chapter3Img, chapter4Img] = chapters;
 
 // Esta URL es para los botones de compartir. Si no tienes dominio, puedes usar la URL donde hospedes tu app (ej: GitHub Pages o Firebase)
 export const APP_URL = typeof window !== 'undefined' ? window.location.origin : '';
@@ -106,7 +104,7 @@ export const CHAPTERS: Chapter[] = [
     color: 'bg-rose-100 text-rose-900 border-rose-300',
     questions: [
       { id: 's1', text: '¿Qué consejo le darías a tu "yo" de 20 años?' },
-      { id: 's2', text: '¿Qué es lo que que más valoras hoy en día?' },
+      { id: 's2', text: '¿Qué es lo que más valoras hoy en día?' },
       { id: 's3', text: '¿Qué es lo que más extrañas de tus padres ahora que tienes esta edad?' },
       { id: 's4', text: '¿Hay algo de lo que te arrepientas o quisieras haber hecho diferente?' },
       { id: 's5', text: '¿Qué le dirías a tus nietos o bisnietos que escucharán esto en el futuro?' },
