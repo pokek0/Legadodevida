@@ -3,6 +3,13 @@ import React from 'react';
 import { Heart, Star, Sun, Anchor, Feather } from 'lucide-react';
 import { Chapter } from './types';
 
+// Importar las imágenes del directorio src
+import logoImg from './src/1_20260902_230633_0000.jpg';
+import chapter1Img from './src/2_20260902_230633_0001.jpg';
+import chapter2Img from './src/3_20260902_230633_0002.jpg';
+import chapter3Img from './src/4_20260902_230633_0003.jpg';
+import chapter4Img from './src/5_20260902_230633_0004.jpg';
+
 // Esta URL es para los botones de compartir. Si no tienes dominio, puedes usar la URL donde hospedes tu app (ej: GitHub Pages o Firebase)
 export const APP_URL = typeof window !== 'undefined' ? window.location.origin : '';
 
@@ -13,7 +20,7 @@ export const CHAPTERS: Chapter[] = [
     subtitle: 'Raíces, juegos y familia',
     icon: (props?: { size?: number; className?: string }) => (
       <img
-        src="/images/chapter_infancia.png"
+        src={chapter1Img}
         alt="Mi Niñez"
         style={props?.size ? { width: props.size, height: props.size, maxWidth: '100%', maxHeight: '100%' } : undefined}
         className={`w-full h-full max-w-full max-h-full object-contain rounded-2xl ${props?.className || ''}`}
@@ -40,7 +47,7 @@ export const CHAPTERS: Chapter[] = [
     subtitle: 'Amores, trabajo y descubrimientos',
     icon: (props?: { size?: number; className?: string }) => (
       <img
-        src="/images/chapter_juventud.png"
+        src={chapter2Img}
         alt="Mi Juventud"
         style={props?.size ? { width: props.size, height: props.size, maxWidth: '100%', maxHeight: '100%' } : undefined}
         className={`w-full h-full max-w-full max-h-full object-contain rounded-2xl ${props?.className || ''}`}
@@ -65,7 +72,7 @@ export const CHAPTERS: Chapter[] = [
     subtitle: 'Construyendo mi propio camino',
     icon: (props?: { size?: number; className?: string }) => (
       <img
-        src="/images/chapter_adultez.png"
+        src={chapter3Img}
         alt="La Adultez"
         style={props?.size ? { width: props.size, height: props.size, maxWidth: '100%', maxHeight: '100%' } : undefined}
         className={`w-full h-full max-w-full max-h-full object-contain rounded-2xl ${props?.className || ''}`}
@@ -89,7 +96,7 @@ export const CHAPTERS: Chapter[] = [
     subtitle: 'Mis pensamientos para ustedes',
     icon: (props?: { size?: number; className?: string }) => (
       <img
-        src="/images/chapter_legado.png"
+        src={chapter4Img}
         alt="Sabiduría y Legado"
         style={props?.size ? { width: props.size, height: props.size, maxWidth: '100%', maxHeight: '100%' } : undefined}
         className={`w-full h-full max-w-full max-h-full object-contain rounded-2xl ${props?.className || ''}`}
@@ -129,3 +136,5 @@ export const TRIGGER_QUESTIONS: Record<string, string[]> = {
     "¿Cuál es el invento o cambio en el mundo que más te ha sorprendido ver en estos 80 años?"
   ]
 };
+
+export const LOGO_IMAGE = logoImg;
